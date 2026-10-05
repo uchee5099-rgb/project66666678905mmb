@@ -9,7 +9,9 @@ services:
     healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
-        value: production
+        value: production  
+      - key: USE_POSTGRES_FIRST
+        value: "true"  
       - key: JWT_SECRET
         generateValue: true
       - key: JWT_EXPIRES_IN
