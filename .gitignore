@@ -24,6 +24,8 @@ server/database/*.sqlite-journal
 dist/
 client/dist/
 build/
+.vite/
+client/.vite/
 
 # Logs
 logs/
