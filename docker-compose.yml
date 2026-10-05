@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  # EarnFlow App
+  app:
+    build: .
+    container_name: earnflow_app
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - NODE_ENV=production
+      - CLIENT_URL=http://localhost:5000
+      - DATABASE_URL=postgresql://earnflow_user:earnflow_secret_password@postgres:5432/earnflow_db
+      - USE_SQLITE_FALLBACK=false
+      - JWT_SECRET=earnflow_super_secure_jwt_secret_key_2026_production
+      - JWT_EXPIRES_IN=7d
+      - PAYSTACK_SECRET_KEY=sk_test_043d8864e5808137f1ccd4661341ed1e245821a1
+      - PAYSTACK_PUBLIC_KEY=pk_test_ec3ec80f29d09bebab36838824c6ad2e30dae836
+      - ACTIVATION_FEE_AMOUNT=1000.00
+      - MIN_WITHDRAWAL_AMOUNT=1000.00
+      - REFERRAL_BONUS_AMOUNT=250.00
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: earnflow_postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=earnflow_db
+      - POSTGRES_USER=earnflow_user
+      - POSTGRES_PASSWORD=earnflow_secret_password
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./server/database/migrations/001_initial_schema.sql:/docker-entrypoint-initdb.d/001_initial_schema.sql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U earnflow_user -d earnflow_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:

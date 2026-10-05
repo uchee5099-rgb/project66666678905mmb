@@ -1,0 +1,30 @@
+{
+  "name": "earnflow",
+  "version": "1.0.0",
+  "description": "EarnFlow - Your Gateway to Online Rewards. Full-Stack Task Rewards Web Platform.",
+  "main": "server/server.js",
+  "scripts": {
+    "install:all": "npm install --prefix server && npm install --prefix client",
+    "install:server": "npm install --prefix server",
+    "install:client": "npm install --prefix client",
+    "build": "npm run build --prefix client",
+    "seed": "npm run seed --prefix server",
+    "test": "npm test --prefix server",
+    "start": "node server/server.js",
+    "dev:server": "npm run dev --prefix server",
+    "dev:client": "npm run dev --prefix client"
+  },
+  "keywords": [
+    "fintech",
+    "rewards",
+    "tasks",
+    "paystack",
+    "react",
+    "nodejs",
+    "express",
+    "postgresql",
+    "sqlite"
+  ],
+  "author": "EarnFlow Engineering",
+  "license": "ISC"
+}
