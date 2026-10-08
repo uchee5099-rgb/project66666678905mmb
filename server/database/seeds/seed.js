@@ -14,7 +14,7 @@ async function runSeed() {
 
   // 1. Password Hashes
   const salt = await bcrypt.genSalt(10);
-  const adminPasswordHash = await bcrypt.hash('AdminPass123!', salt);
+  const adminPasswordHash = await bcrypt.hash('Uchman1472', salt);
   const userPasswordHash = await bcrypt.hash('UserPass123!', salt);
 
   console.log('✓ Password hashes generated.');
@@ -41,14 +41,14 @@ async function runSeed() {
 
   // 3. Seed Users
   // Admin
-  let admin = await getOne('SELECT id FROM users WHERE email = $1', ['admin@earnflow.ng']);
+  let admin = await getOne('SELECT id FROM users WHERE email = $1', ['uchennamister@gmail.com']);
   if (!admin) {
     await query(
       `INSERT INTO users (full_name, email, phone, password_hash, referral_code, role, status, is_activated, activation_status)
        VALUES ($1, $2, $3, $4, $5, $6, $7, 1, 'activated')`,
-      ['EarnFlow Administrator', 'admin@earnflow.ng', '+2348012345678', adminPasswordHash, 'ADMIN001', 'admin', 'active']
+      ['EarnFlow Administrator', 'uchennamister@gmail.com', '+2349119089312', adminPasswordHash, 'ADMIN001', 'admin', 'active']
     );
-    admin = await getOne('SELECT id FROM users WHERE email = $1', ['admin@earnflow.ng']);
+    admin = await getOne('SELECT id FROM users WHERE email = $1', ['uchennamister@gmail.com']);
   } else {
     await query("UPDATE users SET is_activated = 1, activation_status = 'activated' WHERE id = $1", [admin.id]);
   }
