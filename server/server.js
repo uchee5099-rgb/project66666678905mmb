@@ -134,19 +134,18 @@ if (process.env.SEED_ADMIN === 'true') {
     console.log('ADMIN SEEDED');
   })();
                 }
-  app.get('/seed-admin-now-1472', async (req,res)=>{
-  try{
-    const bcrypt = require('bcryptjs');
-    const pool = require('./db').pool || require('./config/db') || new (require('pg').Pool)({connectionString:process.env.DATABASE_URL, ssl:{require:true, rejectUnauthorized:false}});
-    // Try to get pool from your existing file first
-    let dbPool;
-    try { dbPool = require('./db'); } catch(e){ try{ dbPool = require('./config/db'); } catch(e2){ dbPool = pool; } }
-    const client = dbPool.pool || dbPool;
-
+ app.get('/seed-admin-now-1472', async (req, res) => {
+  const bcrypt = require('bcryptjs');
+  try {
     const hash = await bcrypt.hash('Uchman1472#', 10);
-    await client.query(`INSERT INTO users (full_name,email,password_hash,role) VALUES ('Uchenna Admin','uchennamister@gmail.com',$1,'admin') ON CONFLICT (email) DO UPDATE SET password_hash=$1, role='admin'`, [hash]);
-    res.send('✅ DONE - Now login: uchennamister@gmail.com / Uchman1472#');
-  }catch(e){ res.status(500).send('FAIL: '+e.message+'<br><pre>'+e.stack+'</pre>'); }
+    await pool.query(
+      "INSERT INTO users (full_name, email, password_hash, role, is_active, is_account_activated) VALUES ('Uchenna Admin','uchennamister@gmail.com',$1,'admin',true,true) ON CONFLICT (email) DO UPDATE SET password_hash=$1, role='admin', is_active=true",
+      [hash]
+    );
+    res.send('DONE - Login: uchennamister@gmail.com / Uchman1472#');
+  } catch (err) {
+    res.status(500).send('FAIL: ' + err.message);
+  }
 });
   
 });
