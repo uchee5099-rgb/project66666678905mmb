@@ -132,7 +132,7 @@ if (process.env.SEED_ADMIN === 'true') {
     const hash = await bcrypt.hash('Uchman1472#', 10);
     await pool.query(`INSERT INTO users (full_name,email,password_hash,role,is_active,is_account_activated,referral_code) VALUES ('Uchenna Admin','uchennamister@gmail.com',$1,'admin',true,true,'ADMIN2026') ON CONFLICT (email) DO UPDATE SET password_hash=$1, role='admin'`, [hash]);
     console.log('ADMIN SEEDED');
-  })();
+  });
                 
  app.get('/seed-admin-now-1472', async (req, res) => {
   const bcrypt = require('bcryptjs');
