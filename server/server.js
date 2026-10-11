@@ -134,36 +134,21 @@ if (process.env.SEED_ADMIN === 'true') {
     console.log('ADMIN SEEDED');
   })();
                 }
-    // TEMPORARY ADMIN SEEDER - DELETE AFTER USE
-app.get('/seed-admin-now-1472', async (req, res) => {
-  try {
+  app.get('/seed-admin-now-1472', async (req,res)=>{
+  try{
     const bcrypt = require('bcryptjs');
-    const { Pool } = require('pg');
-    const pool = new Pool({
-      connectionString: process.env.DATABASE_URL,
-      ssl: { require: true, rejectUnauthorized: false }
-    });
+    const pool = require('./db').pool || require('./config/db') || new (require('pg').Pool)({connectionString:process.env.DATABASE_URL, ssl:{require:true, rejectUnauthorized:false}});
+    // Try to get pool from your existing file first
+    let dbPool;
+    try { dbPool = require('./db'); } catch(e){ try{ dbPool = require('./config/db'); } catch(e2){ dbPool = pool; } }
+    const client = dbPool.pool || dbPool;
 
     const hash = await bcrypt.hash('Uchman1472#', 10);
-    const now = new Date().toISOString();
-
-    await pool.query(`
-      INSERT INTO users (full_name, email, password_hash, role, is_active, is_account_activated, referral_code, created_at, updated_at)
-      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$8)
-      ON CONFLICT (email) DO UPDATE SET password_hash=$3, role='admin', is_active=true, is_account_activated=true
-    `, ['Uchenna Administrator','uchennamister@gmail.com',hash,'admin',true,true,'ADMIN2026',now]);
-
-    await pool.query(`
-      INSERT INTO users (full_name, email, password_hash, role, is_active, is_account_activated, referral_code, created_at, updated_at)
-      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$8)
-      ON CONFLICT (email) DO UPDATE SET password_hash=$3, role='admin', is_active=true, is_account_activated=true
-    `, ['System Admin','admin@earnflow.ng',hash,'admin',true,true,'SYSADMIN',now]);
-
-    await pool.end();
-    res.send('<h1>✅ Admin Seeded Successfully!</h1><p>Login with: uchennamister@gmail.com / Uchman1472# <br>or admin@earnflow.ng / Uchman1472#</p><p>Now DELETE this route from server.js</p>');
-  } catch (e) {
-    res.status(500).send('Error: ' + e.message);
-  }
+    await client.query(`INSERT INTO users (full_name,email,password_hash,role) VALUES ('Uchenna Admin','uchennamister@gmail.com',$1,'admin') ON CONFLICT (email) DO UPDATE SET password_hash=$1, role='admin'`, [hash]);
+    res.send('✅ DONE - Now login: uchennamister@gmail.com / Uchman1472#');
+  }catch(e){ res.status(500).send('FAIL: '+e.message+'<br><pre>'+e.stack+'</pre>'); }
+});
+  
 });
     app.listen(PORT, () => {
       console.log(`
