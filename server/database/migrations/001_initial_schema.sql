@@ -169,10 +169,9 @@ CREATE TABLE IF NOT EXISTS referrals (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT unique_referral UNIQUE (referrer_id, referred_id)
 );
-ALTER TABLE tasks
-ADD COLUMN IF NOT EXISTS status VARCHAR(20)
-DEFAULT 'Pending'
-CHECK (status IN ('Pending', 'Completed'));
+ALTER TABLE referrals
+ADD COLUMN IF NOT EXISTS referred_id INTEGER
+REFERENCES users(id) ON DELETE CASCADE;
 
 CREATE INDEX IF NOT EXISTS idx_referrals_referrer ON referrals(referrer_id);
 CREATE INDEX IF NOT EXISTS idx_referrals_referred ON referrals(referred_id);
