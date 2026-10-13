@@ -64,22 +64,6 @@ export default function LoginPage() {
     }
   };
 
-  // Quick Demo Login Helper
-  const handleQuickLogin = async (email, password) => {
-    setFormData({ email, password, rememberMe: true });
-    setLoading(true);
-    setError('');
-    try {
-      const loggedUser = await login({ email, password, rememberMe: true });
-      showToast(`Signed in as ${loggedUser.fullName}`, 'success');
-      navigate(loggedUser.role === 'admin' ? '/admin' : '/dashboard');
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <div className="min-h-[85vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full">
