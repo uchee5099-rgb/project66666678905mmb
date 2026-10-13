@@ -24,7 +24,30 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
+ALTER TABLE users
+ADD COLUMN IF NOT EXISTS is_activated BOOLEAN DEFAULT FALSE;
 
+ALTER TABLE users
+ADD COLUMN IF NOT EXISTS activation_status VARCHAR(30)
+DEFAULT 'unactivated'
+CHECK (activation_status IN (
+    'unactivated',
+    'pending_confirmation',
+    'activated'
+));
+
+ALTER TABLE users
+ADD COLUMN IF NOT EXISTS activation_reference VARCHAR(100);
+
+ALTER TABLE users
+ADD COLUMN IF NOT EXISTS activation_paid_at TIMESTAMP WITH TIME ZONE;
+
+ALTER TABLE users
+ADD COLUMN IF NOT EXISTS activation_confirmed_at TIMESTAMP WITH TIME ZONE;
+
+ALTER TABLE users
+ADD COLUMN IF NOT EXISTS activation_confirmed_by INTEGER
+REFERENCES users(id) ON DELETE SET NULL;
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_users_referral_code ON users(referral_code);
 CREATE INDEX IF NOT EXISTS idx_users_activation_status ON users(activation_status);
