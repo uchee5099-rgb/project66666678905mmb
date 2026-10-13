@@ -24,6 +24,10 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
+ALTER TABLE tasks
+ADD COLUMN IF NOT EXISTS status VARCHAR(20)
+DEFAULT 'active'
+CHECK (status IN ('active', 'inactive'));
 ALTER TABLE users
 ADD COLUMN IF NOT EXISTS is_activated BOOLEAN DEFAULT FALSE;
 
@@ -63,6 +67,10 @@ CREATE TABLE IF NOT EXISTS wallets (
     total_withdrawn NUMERIC(12, 2) DEFAULT 0.00 NOT NULL CHECK (total_withdrawn >= 0),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
+ALTER TABLE tasks
+ADD COLUMN IF NOT EXISTS status VARCHAR(20)
+DEFAULT 'active'
+CHECK (status IN ('active', 'inactive'));
 
 CREATE INDEX IF NOT EXISTS idx_wallets_user_id ON wallets(user_id);
 
@@ -81,7 +89,10 @@ CREATE TABLE IF NOT EXISTS tasks (
     status VARCHAR(20) DEFAULT 'active' CHECK (status IN ('active', 'inactive')),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
+);ALTER TABLE tasks
+ADD COLUMN IF NOT EXISTS status VARCHAR(20)
+DEFAULT 'Pending'
+CHECK (status IN ('Pending', 'Approved','Rejected'));
 
 CREATE INDEX IF NOT EXISTS idx_tasks_category ON tasks(category);
 CREATE INDEX IF NOT EXISTS idx_tasks_status ON tasks(status);
@@ -99,6 +110,10 @@ CREATE TABLE IF NOT EXISTS task_submissions (
     reviewed_at TIMESTAMP WITH TIME ZONE,
     reviewed_by INTEGER REFERENCES users(id) ON DELETE SET NULL
 );
+ALTER TABLE tasks
+ADD COLUMN IF NOT EXISTS status VARCHAR(20)
+DEFAULT 'active'
+CHECK (status IN ('active', 'inactive'));
 
 CREATE INDEX IF NOT EXISTS idx_task_submissions_task ON task_submissions(task_id);
 CREATE INDEX IF NOT EXISTS idx_task_submissions_user ON task_submissions(user_id);
@@ -115,6 +130,10 @@ CREATE TABLE IF NOT EXISTS transactions (
     reference VARCHAR(100) UNIQUE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
+ALTER TABLE tasks
+ADD COLUMN IF NOT EXISTS status VARCHAR(20)
+DEFAULT 'Completed'
+CHECK (status IN ('Pending', 'Completed','Approved','Rejected'));
 
 CREATE INDEX IF NOT EXISTS idx_transactions_user ON transactions(user_id);
 CREATE INDEX IF NOT EXISTS idx_transactions_type ON transactions(type);
@@ -132,6 +151,10 @@ CREATE TABLE IF NOT EXISTS withdrawals (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
+ALTER TABLE tasks
+ADD COLUMN IF NOT EXISTS status VARCHAR(20)
+DEFAULT 'Pending'
+CHECK (status IN ('pending', 'processing','Approved','Rejected'));
 
 CREATE INDEX IF NOT EXISTS idx_withdrawals_user ON withdrawals(user_id);
 CREATE INDEX IF NOT EXISTS idx_withdrawals_status ON withdrawals(status);
@@ -146,6 +169,10 @@ CREATE TABLE IF NOT EXISTS referrals (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT unique_referral UNIQUE (referrer_id, referred_id)
 );
+ALTER TABLE tasks
+ADD COLUMN IF NOT EXISTS status VARCHAR(20)
+DEFAULT 'Pending'
+CHECK (status IN ('Pending', 'Completed'));
 
 CREATE INDEX IF NOT EXISTS idx_referrals_referrer ON referrals(referrer_id);
 CREATE INDEX IF NOT EXISTS idx_referrals_referred ON referrals(referred_id);
@@ -160,6 +187,10 @@ CREATE TABLE IF NOT EXISTS notifications (
     is_read BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
+ALTER TABLE tasks
+ADD COLUMN IF NOT EXISTS status VARCHAR(20)
+DEFAULT 'active'
+CHECK (status IN ('active', 'inactive'));
 
 CREATE INDEX IF NOT EXISTS idx_notifications_user ON notifications(user_id);
 
@@ -172,6 +203,10 @@ CREATE TABLE IF NOT EXISTS admin_users (
     last_login TIMESTAMP WITH TIME ZONE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
+ALTER TABLE tasks
+ADD COLUMN IF NOT EXISTS status VARCHAR(20)
+DEFAULT 'active'
+CHECK (status IN ('active', 'inactive'));
 
 CREATE INDEX IF NOT EXISTS idx_admin_users_user_id ON admin_users(user_id);
 
@@ -186,6 +221,10 @@ CREATE TABLE IF NOT EXISTS audit_logs (
     ip_address VARCHAR(50),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
+ALTER TABLE tasks
+ADD COLUMN IF NOT EXISTS status VARCHAR(20)
+DEFAULT 'active'
+CHECK (status IN ('active', 'inactive'));
 
 CREATE INDEX IF NOT EXISTS idx_audit_logs_admin ON audit_logs(admin_id);
 
@@ -196,3 +235,4 @@ CREATE TABLE IF NOT EXISTS system_settings (
     description VARCHAR(255),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
+
