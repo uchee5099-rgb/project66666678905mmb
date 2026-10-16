@@ -73,22 +73,29 @@ function convertSqlitePlaceholders(sql, params) {
 }
 
 async function runPgMigrations() {
-  if (!fs.existsSync(MIGRATION_FILE)) {
-    throw new Error(
-      `Required PostgreSQL migration file is missing: ${MIGRATION_FILE}`
-    );
+  const migrationFiles = [
+    MIGRATION_FILE,
+    path.join(
+      __dirname,
+      'migrations',
+      '002_repair_users_status.sql'
+    )
+  ];
+
+  for (const file of migrationFiles) {
+    if (!fs.existsSync(file)) {
+      throw new Error(`Required migration file is missing: ${file}`);
+    }
+
+    const sql = fs.readFileSync(file, 'utf8');
+
+    if (!sql.trim()) {
+      throw new Error(`Migration file is empty: ${file}`);
+    }
+
+    await dbClient.query(sql);
+    console.log(`Migration completed: ${path.basename(file)}`);
   }
-
-  const sql = fs.readFileSync(MIGRATION_FILE, 'utf8');
-
-  if (!sql.trim()) {
-    throw new Error('The PostgreSQL migration file is empty.');
-  }
-
-  // Run the complete SQL schema and allow errors to stop startup.
-  await dbClient.query(sql);
-
-  console.log('PostgreSQL schema migration completed.');
 }
 
 async function runSqliteMigrations() {
