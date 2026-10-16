@@ -101,6 +101,33 @@ if (process.env.NODE_ENV !== 'production') {
   });
 }
 
+app.get('/api/diagnostic-users-columns', async (req, res) => {
+  const suppliedKey = req.get('x-diagnostic-key');
+  const expectedKey = process.env.DIAGNOSTIC_KEY;
+
+  if (!expectedKey || suppliedKey !== expectedKey) {
+    return res.status(404).json({ error: 'Not found' });
+  }
+
+  try {
+    const result = await require('./database/db').query(`
+      SELECT column_name
+      FROM information_schema.columns
+      WHERE table_schema = 'public'
+        AND table_name = 'users'
+      ORDER BY ordinal_position
+    `);
+
+    res.json({
+      database: require('./database/db').getDbType(),
+      columns: result.rows.map(row => row.column_name)
+    });
+  } catch (err) {
+    console.error('Diagnostic query failed:', err.message);
+    res.status(500).json({ error: 'Diagnostic query failed' });
+  }
+});
+
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({
